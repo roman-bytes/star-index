@@ -4,11 +4,12 @@ import { ReactElement } from 'react';
 
 import Layout from '../components/layout';
 import SEO from '../components/seo';
+import Search from '../components/search';
 
 const IndexPage: FunctionComponent = (): ReactElement => (
     <Layout>
         <SEO title="Home" />
-        <h1 className="text-3xl">Hi people</h1>
+        <Search />
     </Layout>
 );
 

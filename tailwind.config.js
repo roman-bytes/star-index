@@ -1,6 +1,13 @@
 module.exports = {
     theme: {
-        extend: {},
+        extend: {
+            colors: {
+                starwarsYellow: '#FFE81F',
+            },
+            padding: {
+                lg: '9rem',
+            },
+        },
     },
     variants: {},
     plugins: [],
