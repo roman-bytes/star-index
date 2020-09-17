@@ -14,14 +14,15 @@ const escapeRegexCharacters = (str) => {
 const Search: FunctionComponent = (): ReactElement => {
     const gqlData = useStaticQuery(graphql`
         {
-            starWars {
-                results {
+            allStarWars {
+                nodes {
                     name
                 }
             }
         }
     `);
-    const results = gqlData.starWars.results;
+
+    const results = gqlData.allStarWars.nodes;
     const [suggestions, setSuggestions] = useState(results);
     const [fetching, setFetching] = useState(false);
     const [value, setValue] = useState('');
@@ -81,11 +82,19 @@ const Search: FunctionComponent = (): ReactElement => {
         setValue(newValue);
     };
 
-    if (status === 'loading') return <p className="text-white">Loading....</p>;
+    if (status === 'loading')
+        return (
+            <div className="psoload">
+                <div className="straight"></div>
+                <div className="curve"></div>
+                <div className="center"></div>
+                <div className="inner"></div>
+            </div>
+        );
     if (status === 'error') return <p className="text-red">Error..... :(</p>;
 
     if (status === 'success')
-        return <Character charcterInfo={data.results[0]} />;
+        return <Character charcterInfo={getSuggestions(value)} />;
 
     return (
         <div className="w-full relative text-gray-600 flex flex-row items-center justify-between">

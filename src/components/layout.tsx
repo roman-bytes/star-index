@@ -86,7 +86,9 @@ const Layout: FunctionComponent<LayoutProps> = ({
                         </g>
                     </g>
                 </svg>
-                <main className="flex w-full h-full mt-10">{children}</main>
+                <main className="flex w-full h-full mt-10 items-center">
+                    {children}
+                </main>
             </div>
         </>
     );

@@ -10,11 +10,12 @@ const axios = require('axios');
 exports.sourceNodes = async ({
     actions: { createNode },
     createContentDigest,
+    createNodeId,
 }) => {
     let people;
 
     // Collect all of the data
-    const result = await axios('https://swapi.dev/api/people')
+    const results = await axios('https://swapi.dev/api/people')
         .then((res) => {
             people = res.data.results;
             return res.data.count;
@@ -39,15 +40,17 @@ exports.sourceNodes = async ({
         })
         .catch((error) => console.log('error', error));
 
-    createNode({
-        results: result,
-        // required fields
-        id: `star-wars-data`,
-        parent: null,
-        children: [],
-        internal: {
-            type: `starWars`,
-            contentDigest: createContentDigest(result),
-        },
-    });
+    // const resultJSON = Object.assign({}, result);
+
+    return results.map((result) =>
+        createNode({
+            ...result,
+            // required fields
+            id: createNodeId(result.name),
+            internal: {
+                type: `starWars`,
+                contentDigest: createContentDigest(result),
+            },
+        })
+    );
 };
