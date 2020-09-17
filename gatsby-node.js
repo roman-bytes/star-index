@@ -6,6 +6,26 @@ require('ts-node').register({ files: true });
  * See: https://www.gatsbyjs.org/docs/node-apis/
  */
 const axios = require('axios');
+const path = require('path');
+
+function slugify(string) {
+    const a =
+        'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;';
+    const b =
+        'aaaaaaaaaacccddeeeeeeeegghiiiiiilmnnnnoooooooooprrsssssttuuuuuuuuuwxyyzzz------';
+    const p = new RegExp(a.split('').join('|'), 'g');
+
+    return string
+        .toString()
+        .toLowerCase()
+        .replace(/\s+/g, '-') // Replace spaces with -
+        .replace(p, (c) => b.charAt(a.indexOf(c))) // Replace special characters
+        .replace(/&/g, '-and-') // Replace & with 'and'
+        .replace(/[^\w\-]+/g, '') // Remove all non-word characters
+        .replace(/\-\-+/g, '-') // Replace multiple - with single -
+        .replace(/^-+/, '') // Trim - from start of text
+        .replace(/-+$/, ''); // Trim - from end of text
+}
 
 exports.sourceNodes = async ({
     actions: { createNode },
@@ -40,8 +60,6 @@ exports.sourceNodes = async ({
         })
         .catch((error) => console.log('error', error));
 
-    // const resultJSON = Object.assign({}, result);
-
     return results.map((result) =>
         createNode({
             ...result,
@@ -53,4 +71,55 @@ exports.sourceNodes = async ({
             },
         })
     );
+};
+
+exports.createPages = async ({ graphql, actions, reporter }) => {
+    const { createPage } = actions;
+    // Query for markdown nodes to use in creating pages.
+    const result = await graphql(
+        `
+            {
+                allStarWars {
+                    edges {
+                        node {
+                            birth_year
+                            eye_color
+                            films
+                            gender
+                            hair_color
+                            height
+                            homeworld
+                            id
+                            mass
+                            name
+                            skin_color
+                            species
+                            starships
+                            url
+                            vehicles
+                        }
+                    }
+                }
+            }
+        `
+    );
+    // Handle errors
+    if (result.errors) {
+        reporter.panicOnBuild(`Error while running GraphQL query.`);
+        return;
+    }
+    // Create pages for each markdown file.
+    const charcterTemplate = path.resolve(`src/templates/characterPage.tsx`);
+    result.data.allStarWars.edges.forEach(({ node }) => {
+        const path = slugify(node.name);
+        createPage({
+            path,
+            component: charcterTemplate,
+            // In your blog post template's graphql query, you can use pagePath
+            // as a GraphQL variable to query for data from the markdown file.
+            context: {
+                node,
+            },
+        });
+    });
 };

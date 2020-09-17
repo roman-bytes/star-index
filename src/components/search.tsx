@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { FunctionComponent, ReactElement } from 'react';
 import { graphql, useStaticQuery } from 'gatsby';
-import { useQuery } from 'react-query';
-import Character from '../components/charcter';
-import fetch from '../utils/fetch';
+import Character from './character';
 import Autosuggest from 'react-autosuggest';
 
 // https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#Using_Special_Characters
@@ -24,18 +22,9 @@ const Search: FunctionComponent = (): ReactElement => {
 
     const results = gqlData.allStarWars.nodes;
     const [suggestions, setSuggestions] = useState(results);
-    const [fetching, setFetching] = useState(false);
     const [value, setValue] = useState('');
-
-    const { status, error, data, refetch, isSuccess } = useQuery(
-        'charcters',
-        () => fetch(`https://swapi.dev/api/people/?search=${value}`),
-        {
-            enabled: fetching,
-        }
-    );
-
-    console.log('data', data);
+    const [showResults, setShowResults] = useState(false);
+    const [status, setStatus] = useState('idle');
 
     const getSuggestions = (value) => {
         const escapedValue = escapeRegexCharacters(value.trim());
@@ -53,24 +42,27 @@ const Search: FunctionComponent = (): ReactElement => {
     // based on the clicked suggestion. Teach Autosuggest how to calculate the
     // input value for every given suggestion.
     const getSuggestionValue = (suggestions) => {
-        setFetching(true);
-
         return suggestions.name;
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        //tODO: Render an error message
+        if (!value) {
+            setStatus('error');
+            return;
+        }
+        setShowResults(true);
     };
 
     // Use your imagination to render suggestions.
     const renderSuggestion = (suggestions) => (
-        <div className="bg-black text-white border border-t-0 px-4 py-2 hover:bg-starwarsYellow hover:text-black hover:font-bold">
+        <div className="bg-black text-white border border-t-0 px-4 py-2 focus:bg-starwarsYellow hover:bg-starwarsYellow hover:text-black hover:font-bold">
             {suggestions.name}
         </div>
     );
 
     const onSuggestionsFetchRequested = ({ value }) => {
-        console.log('isSuccess', isSuccess);
-        if (isSuccess) {
-            setFetching(false);
-        }
-        console.log('onSuggestionsFetchRequested-value', value);
         setSuggestions(getSuggestions(value));
     };
 
@@ -82,22 +74,15 @@ const Search: FunctionComponent = (): ReactElement => {
         setValue(newValue);
     };
 
-    if (status === 'loading')
-        return (
-            <div className="psoload">
-                <div className="straight"></div>
-                <div className="curve"></div>
-                <div className="center"></div>
-                <div className="inner"></div>
-            </div>
-        );
-    if (status === 'error') return <p className="text-red">Error..... :(</p>;
+    if (status === 'error') return <p className="text-red">Error, the force is not strong with this one..... :(</p>;
 
-    if (status === 'success')
-        return <Character charcterInfo={getSuggestions(value)} />;
+    if (showResults) return <Character characterInfo={getSuggestions(value)} />;
 
     return (
-        <div className="w-full relative text-gray-600 flex flex-row items-center justify-between">
+        <form
+            onSubmit={(e) => handleSubmit(e)}
+            className="w-full max-w-2xl relative text-gray-600 flex flex-row items-center justify-between"
+        >
             <Autosuggest
                 className="w-full"
                 suggestions={suggestions}
@@ -115,12 +100,11 @@ const Search: FunctionComponent = (): ReactElement => {
             />
             <button
                 type="submit"
-                onClick={getSuggestionValue}
                 className="absolute top-0 right-0 bg-starwarsYellow w-auto whitespace-pre px-4 py-2 text-black rounded-lg rounded-l-none"
             >
                 Find Character
             </button>
-        </div>
+        </form>
     );
 };
 
