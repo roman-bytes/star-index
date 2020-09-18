@@ -18,6 +18,7 @@
     "gatsby-plugin-typescript": "^2.4.16",
     "gatsby-source-filesystem": "^2.3.23",
     "gatsby-transformer-sharp": "^2.5.12",
+    "netlify-cli": "^2.63.2",
     "react": "^16.13.1",
     "react-autosuggest": "^10.0.2",
     "react-dom": "^16.13.1",
