@@ -74,9 +74,15 @@ const Search: FunctionComponent = (): ReactElement => {
         setValue(newValue);
     };
 
-    if (status === 'error') return <p className="text-red">Error, the force is not strong with this one..... :(</p>;
+    if (status === 'error')
+        return (
+            <p className="text-red">
+                Error, the force is not strong with this one..... :(
+            </p>
+        );
 
-    if (showResults) return <Character characterInfo={getSuggestions(value)} />;
+    if (showResults)
+        return <Character characterNames={getSuggestions(value)} />;
 
     return (
         <form

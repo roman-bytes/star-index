@@ -3,9 +3,14 @@ import { FunctionComponent, ReactElement } from 'react';
 import { Link } from 'gatsby';
 import slugify from '../utils/slugify';
 
-const Character: FunctionComponent = ({ characterInfo }): ReactElement => {
-    console.log('charc', characterInfo);
-    const character = characterInfo.map((charc, ix) => (
+type CharacterProps = {
+    characterNames: array;
+};
+
+const Character: FunctionComponent<CharacterProps> = ({
+    characterNames,
+}): ReactElement => {
+    const character = characterNames.map((charc, ix) => (
         <Link
             key={ix}
             to={slugify(charc.name)}

@@ -9,7 +9,9 @@ const NotFoundPage: FunctionComponent = (): ReactElement => (
     <Layout>
         <SEO title="404: Not found" />
         <h1 className="text-white">NOT FOUND</h1>
-        <p className="text-white">You just hit a route that doesn&#39;t exist... the sadness.</p>
+        <p className="text-white">
+            You just hit a route that doesn&#39;t exist... the sadness.
+        </p>
     </Layout>
 );
 
