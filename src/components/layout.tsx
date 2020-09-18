@@ -32,9 +32,11 @@ const Layout: FunctionComponent<LayoutProps> = ({
 
     return (
         <>
-            <div id="stars" />
-            <div id="stars2" />
-            <div id="stars3" />
+            <div className="absolute top-0 right-0 left-0 bottom-0 overflow-hidden">
+                <div id="stars" />
+                <div id="stars2" />
+                <div id="stars3" />
+            </div>
             <div className="container z-10 relative flex mt-8 mx-auto max-w-4xl pt-0 px-4 pb-6 items-center align-center flex-col">
                 <svg
                     version="{1.0}"
@@ -84,7 +86,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
                         </g>
                     </g>
                 </svg>
-                <main className="flex w-full h-full mt-10 items-center justify-center">
+                <main className="flex w-full h-full mt-10 items-center justify-center flex-col mb-20">
                     {children}
                 </main>
             </div>

@@ -14,11 +14,11 @@ const Film: FunctionComponent<FilmProps> = ({ film, id }): ReactElement => {
         fetch(`${secureFilm}`)
     );
 
-    if (status === 'loading') return <div>Loading....</div>;
+    if (status === 'loading') return <div className="h-4 bg-gray-800 rounded animate-pulse my-2"></div>;
 
     if (status === 'error') return <div>Error :( {error}</div>;
 
-    return <div>- {data.title}</div>;
+    return <li>{data.title}</li>;
 };
 
 export default Film;

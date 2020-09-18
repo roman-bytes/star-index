@@ -1,6 +1,6 @@
 # Star Index
 
-Check out the demo here: (https://hardcore-brahmagupta-e682b9.netlify.app/)[https://hardcore-brahmagupta-e682b9.netlify.app/]
+Check out the demo here: [https://hardcore-brahmagupta-e682b9.netlify.app/](https://hardcore-brahmagupta-e682b9.netlify.app/)
 
 ## 🚀 Quick start
 
@@ -19,4 +19,4 @@ Check out the demo here: (https://hardcore-brahmagupta-e682b9.netlify.app/)[http
    
 3. **Visit site.**
 
-Site can be found at (http://localhost:8000/)[http://localhost:8000/]
+Site can be found at [http://localhost:8000/](http://localhost:8000/)

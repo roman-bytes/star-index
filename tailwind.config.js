@@ -7,6 +7,12 @@ module.exports = {
             padding: {
                 lg: '9rem',
             },
+            opacity: {
+                'image-bg': '.95',
+            },
+            backgroundImage: (theme) => ({
+                'profile-background': "url('https://images.unsplash.com/photo-1588609889709-09a65ef625d9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format')",
+            }),
         },
     },
     variants: {},

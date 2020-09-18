@@ -7,7 +7,7 @@ type CharacterProps = {
     characterNames: array;
 };
 
-const Character: FunctionComponent<CharacterProps> = ({
+const CharacterList: FunctionComponent<CharacterProps> = ({
     characterNames,
 }): ReactElement => {
     const character = characterNames.map((charc, ix) => (
@@ -36,4 +36,4 @@ const Character: FunctionComponent<CharacterProps> = ({
     );
 };
 
-export default Character;
+export default CharacterList;

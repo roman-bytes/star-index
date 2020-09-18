@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FunctionComponent, ReactElement } from 'react';
-import { graphql, useStaticQuery, navigate } from 'gatsby';
-import Character from './character';
+import { graphql, useStaticQuery, navigate, Link } from 'gatsby';
+import CharacterList from './character';
 import Autosuggest from 'react-autosuggest';
 import slugify from '../utils/slugify';
 
@@ -49,18 +49,16 @@ const Search: FunctionComponent = (): ReactElement => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const selected = getSuggestions(value);
-        console.log('1');
         if (!value) {
             setStatus('error');
             return;
         }
-        console.log('2');
+
+        // If there is only one results lets just go to that page
         if (selected.length <= 1) {
-            console.log('3');
             const slug = slugify(value);
             navigate(`/${slug}`);
         } else {
-            console.log('4');
             setShowResults(true);
         }
     };
@@ -84,6 +82,10 @@ const Search: FunctionComponent = (): ReactElement => {
         setValue(newValue);
     };
 
+    const clearResults = () => {
+        setShowResults(false);
+    };
+
     if (status === 'error')
         return (
             <p className="text-red">
@@ -92,7 +94,23 @@ const Search: FunctionComponent = (): ReactElement => {
         );
 
     if (showResults)
-        return <Character characterNames={getSuggestions(value)} />;
+        return (
+            <>
+                <div className="flex items-center justify-between text-white">
+                    <svg
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                        fill="white"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path d="M15.705 7.41L14.295 6L8.29504 12L14.295 18L15.705 16.59L11.125 12L15.705 7.41Z" />
+                    </svg>
+                    <button onClick={() => clearResults()}>Back to search</button>
+                </div>
+                <CharacterList characterNames={getSuggestions(value)} />
+            </>
+        );
 
     return (
         <form
