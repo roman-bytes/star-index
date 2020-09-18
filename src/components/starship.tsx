@@ -15,7 +15,7 @@ const Starship: FunctionComponent<StarshipProps> = ({
     const secureStarship = starship.replace('http', 'https');
 
     const { data, status, error } = useQuery(`starship-${id}`, () =>
-        fetch(`${starship}`)
+        fetch(`${secureStarship}`)
     );
 
     if (status === 'loading') return <div>Loading....</div>;
