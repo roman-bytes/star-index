@@ -32,10 +32,10 @@ exports.sourceNodes = async ({
     createContentDigest,
     createNodeId,
 }) => {
-    let people;
+    let people, films, speci, starships;
 
     // Collect all of the data
-    const results = await axios('https://swapi.dev/api/people')
+    const peopleResults = await axios('https://swapi.dev/api/people')
         .then((res) => {
             people = res.data.results;
             return res.data.count;
@@ -60,17 +60,131 @@ exports.sourceNodes = async ({
         })
         .catch((error) => console.log('error', error));
 
-    return results.map((result) =>
+    peopleResults.map((result) =>
         createNode({
             ...result,
             // required fields
             id: createNodeId(result.name),
             internal: {
-                type: `starWars`,
+                type: `starWarsPeople`,
                 contentDigest: createContentDigest(result),
             },
         })
     );
+
+    const filmResults = await axios('http://swapi.dev/api/films/')
+        .then((res) => {
+            films = res.data.results;
+            return res.data.count;
+        })
+        .then((count) => {
+            // exclude the first request
+            const numberOfPagesLeft = Math.ceil((count - 1) / 10);
+            const promises = [];
+            // start at 2 as you already queried the first page
+            for (let i = 2; i <= numberOfPagesLeft; i++) {
+                promises.push(axios(`https://swapi.dev/api/films?page=${i}`));
+            }
+
+            return Promise.all(promises);
+        })
+        .then((res) => {
+            films = res.reduce(
+                (acc, data) => [...acc, ...data.data.results],
+                films
+            );
+            return films;
+        })
+        .catch((error) => console.log('error', error));
+
+    filmResults.map((result) =>
+        createNode({
+            ...result,
+            // required fields
+            id: createNodeId(result.title),
+            internal: {
+                type: `starWarsFilms`,
+                contentDigest: createContentDigest(result),
+            },
+        })
+    );
+
+    const speciResults = await axios('http://swapi.dev/api/species/')
+        .then((res) => {
+            speci = res.data.results;
+            return res.data.count;
+        })
+        .then((count) => {
+            // exclude the first request
+            const numberOfPagesLeft = Math.ceil((count - 1) / 10);
+            const promises = [];
+            // start at 2 as you already queried the first page
+            for (let i = 2; i <= numberOfPagesLeft; i++) {
+                promises.push(axios(`https://swapi.dev/api/species?page=${i}`));
+            }
+
+            return Promise.all(promises);
+        })
+        .then((res) => {
+            speci = res.reduce(
+                (acc, data) => [...acc, ...data.data.results],
+                speci
+            );
+            return speci;
+        })
+        .catch((error) => console.log('error', error));
+
+    speciResults.map((result, ix) =>
+        createNode({
+            ...result,
+            // required fields
+            id: createNodeId(`${result.name}-${ix}`),
+            internal: {
+                type: `starWarsSpeci`,
+                contentDigest: createContentDigest(result),
+            },
+        })
+    );
+
+    const starshipResults = await axios('http://swapi.dev/api/starships')
+        .then((res) => {
+            starships = res.data.results;
+            return res.data.count;
+        })
+        .then((count) => {
+            // exclude the first request
+            const numberOfPagesLeft = Math.ceil((count - 1) / 10);
+            const promises = [];
+            // start at 2 as you already queried the first page
+            for (let i = 2; i <= numberOfPagesLeft; i++) {
+                promises.push(
+                    axios(`https://swapi.dev/api/starships?page=${i}`)
+                );
+            }
+
+            return Promise.all(promises);
+        })
+        .then((res) => {
+            starships = res.reduce(
+                (acc, data) => [...acc, ...data.data.results],
+                starships
+            );
+            return starships;
+        })
+        .catch((error) => console.log('error', error));
+
+    starshipResults.map((result, ix) =>
+        createNode({
+            ...result,
+            // required fields
+            id: createNodeId(`${result.name}`),
+            internal: {
+                type: `starWarsStarship`,
+                contentDigest: createContentDigest(result),
+            },
+        })
+    );
+
 };
 
 exports.createPages = async ({ graphql, actions, reporter }) => {
@@ -79,7 +193,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     const result = await graphql(
         `
             {
-                allStarWars {
+                allStarWarsPeople {
                     edges {
                         node {
                             birth_year
@@ -110,7 +224,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     }
     // Create pages for each markdown file.
     const charcterTemplate = path.resolve(`src/templates/characterPage.tsx`);
-    result.data.allStarWars.edges.forEach(({ node }) => {
+    result.data.allStarWarsPeople.edges.forEach(({ node }) => {
         const path = slugify(node.name);
         createPage({
             path,

@@ -8,7 +8,10 @@ type StarshipProps = {
     id: number;
 };
 
-const Starship: FunctionComponent<StarshipProps> = ({ starship, id }): ReactElement => {
+const Starship: FunctionComponent<StarshipProps> = ({
+    starship,
+    id,
+}): ReactElement => {
     const { data, status, error } = useQuery(`starship-${id}`, () =>
         fetch(`${starship}`)
     );

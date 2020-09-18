@@ -12,7 +12,7 @@ const escapeRegexCharacters = (str) => {
 const Search: FunctionComponent = (): ReactElement => {
     const gqlData = useStaticQuery(graphql`
         {
-            allStarWars {
+            allStarWarsPeople {
                 nodes {
                     name
                 }
@@ -20,7 +20,7 @@ const Search: FunctionComponent = (): ReactElement => {
         }
     `);
 
-    const results = gqlData.allStarWars.nodes;
+    const results = gqlData.allStarWarsPeople.nodes;
     const [suggestions, setSuggestions] = useState(results);
     const [value, setValue] = useState('');
     const [showResults, setShowResults] = useState(false);
@@ -47,7 +47,6 @@ const Search: FunctionComponent = (): ReactElement => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        //tODO: Render an error message
         if (!value) {
             setStatus('error');
             return;
