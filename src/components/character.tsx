@@ -30,7 +30,7 @@ const Character: FunctionComponent<CharacterProps> = ({
     ));
 
     return (
-        <div className="bg-black p-8 w-full grid grid-cols-3 grid-rows-3 gap-4">
+        <div className="bg-black p-2 md:p-8 w-full grid grid-cols-1 md:grid-cols-3 grid-rows-1 md:grid-rows-3 gap-4">
             {character}
         </div>
     );

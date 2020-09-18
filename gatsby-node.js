@@ -32,7 +32,7 @@ exports.sourceNodes = async ({
     createContentDigest,
     createNodeId,
 }) => {
-    let people, films, speci, starships;
+    let people;
 
     // Collect all of the data
     const peopleResults = await axios('https://swapi.dev/api/people')
@@ -71,120 +71,6 @@ exports.sourceNodes = async ({
             },
         })
     );
-
-    const filmResults = await axios('http://swapi.dev/api/films/')
-        .then((res) => {
-            films = res.data.results;
-            return res.data.count;
-        })
-        .then((count) => {
-            // exclude the first request
-            const numberOfPagesLeft = Math.ceil((count - 1) / 10);
-            const promises = [];
-            // start at 2 as you already queried the first page
-            for (let i = 2; i <= numberOfPagesLeft; i++) {
-                promises.push(axios(`https://swapi.dev/api/films?page=${i}`));
-            }
-
-            return Promise.all(promises);
-        })
-        .then((res) => {
-            films = res.reduce(
-                (acc, data) => [...acc, ...data.data.results],
-                films
-            );
-            return films;
-        })
-        .catch((error) => console.log('error', error));
-
-    filmResults.map((result) =>
-        createNode({
-            ...result,
-            // required fields
-            id: createNodeId(result.title),
-            internal: {
-                type: `starWarsFilms`,
-                contentDigest: createContentDigest(result),
-            },
-        })
-    );
-
-    const speciResults = await axios('http://swapi.dev/api/species/')
-        .then((res) => {
-            speci = res.data.results;
-            return res.data.count;
-        })
-        .then((count) => {
-            // exclude the first request
-            const numberOfPagesLeft = Math.ceil((count - 1) / 10);
-            const promises = [];
-            // start at 2 as you already queried the first page
-            for (let i = 2; i <= numberOfPagesLeft; i++) {
-                promises.push(axios(`https://swapi.dev/api/species?page=${i}`));
-            }
-
-            return Promise.all(promises);
-        })
-        .then((res) => {
-            speci = res.reduce(
-                (acc, data) => [...acc, ...data.data.results],
-                speci
-            );
-            return speci;
-        })
-        .catch((error) => console.log('error', error));
-
-    speciResults.map((result, ix) =>
-        createNode({
-            ...result,
-            // required fields
-            id: createNodeId(`${result.name}-${ix}`),
-            internal: {
-                type: `starWarsSpeci`,
-                contentDigest: createContentDigest(result),
-            },
-        })
-    );
-
-    const starshipResults = await axios('http://swapi.dev/api/starships')
-        .then((res) => {
-            starships = res.data.results;
-            return res.data.count;
-        })
-        .then((count) => {
-            // exclude the first request
-            const numberOfPagesLeft = Math.ceil((count - 1) / 10);
-            const promises = [];
-            // start at 2 as you already queried the first page
-            for (let i = 2; i <= numberOfPagesLeft; i++) {
-                promises.push(
-                    axios(`https://swapi.dev/api/starships?page=${i}`)
-                );
-            }
-
-            return Promise.all(promises);
-        })
-        .then((res) => {
-            starships = res.reduce(
-                (acc, data) => [...acc, ...data.data.results],
-                starships
-            );
-            return starships;
-        })
-        .catch((error) => console.log('error', error));
-
-    starshipResults.map((result, ix) =>
-        createNode({
-            ...result,
-            // required fields
-            id: createNodeId(`${result.name}`),
-            internal: {
-                type: `starWarsStarship`,
-                contentDigest: createContentDigest(result),
-            },
-        })
-    );
-
 };
 
 exports.createPages = async ({ graphql, actions, reporter }) => {

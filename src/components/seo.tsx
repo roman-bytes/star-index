@@ -47,7 +47,7 @@ const SEO: FunctionComponent<SeoProps> = ({
         <Helmet
             htmlAttributes={{
                 lang,
-                class: 'bg-black h-full overflow-hidden',
+                class: 'bg-black md:overflow-hidden',
             }}
             title={title}
             titleTemplate={`%s | ${site.siteMetadata.title}`}

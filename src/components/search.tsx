@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { FunctionComponent, ReactElement } from 'react';
-import { graphql, useStaticQuery } from 'gatsby';
+import { graphql, useStaticQuery, navigate } from 'gatsby';
 import Character from './character';
 import Autosuggest from 'react-autosuggest';
+import slugify from '../utils/slugify';
 
 // https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#Using_Special_Characters
 const escapeRegexCharacters = (str) => {
@@ -47,11 +48,21 @@ const Search: FunctionComponent = (): ReactElement => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const selected = getSuggestions(value);
+        console.log('1');
         if (!value) {
             setStatus('error');
             return;
         }
-        setShowResults(true);
+        console.log('2');
+        if (selected.length <= 1) {
+            console.log('3');
+            const slug = slugify(value);
+            navigate(`/${slug}`);
+        } else {
+            console.log('4');
+            setShowResults(true);
+        }
     };
 
     // Use your imagination to render suggestions.
