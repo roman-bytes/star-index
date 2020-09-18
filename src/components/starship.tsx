@@ -12,13 +12,15 @@ const Starship: FunctionComponent<StarshipProps> = ({
     starship,
     id,
 }): ReactElement => {
+    const secureStarship = starship.replace('http', 'https');
+
     const { data, status, error } = useQuery(`starship-${id}`, () =>
         fetch(`${starship}`)
     );
 
     if (status === 'loading') return <div>Loading....</div>;
 
-    if (status === 'error') return <div>Error :(</div>;
+    if (status === 'error') return <div>Error :( {error}</div>;
 
     return <div>- {data.name}</div>;
 };

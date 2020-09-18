@@ -9,13 +9,14 @@ type FilmProps = {
 };
 
 const Film: FunctionComponent<FilmProps> = ({ film, id }): ReactElement => {
+    const secureFilm = film.replace('http', 'https');
     const { data, status, error } = useQuery(`film-${id}`, () =>
-        fetch(`${film}`)
+        fetch(`${secureFilm}`)
     );
 
     if (status === 'loading') return <div>Loading....</div>;
 
-    if (status === 'error') return <div>Error :(</div>;
+    if (status === 'error') return <div>Error :( {error}</div>;
 
     return <div>- {data.title}</div>;
 };
