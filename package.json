@@ -63,9 +63,9 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/roman-bytes/star-index"
   },
   "bugs": {
-    "url": ""
+    "url": "https://github.com/roman-bytes/star-index/issues"
   }
 }

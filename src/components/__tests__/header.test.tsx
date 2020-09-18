@@ -1,18 +1,12 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import { render } from '@testing-library/react';
-import Header from '../header';
+import Search from '../search';
 
-describe('Header', () => {
+describe('Search', () => {
     it('renders correctly', () => {
-        const tree = renderer.create(<Header siteTitle="Starter" />).toJSON();
+        const tree = renderer.create(<Search />).toJSON();
 
         expect(tree).toMatchSnapshot();
-    });
-
-    it('contains a link to the home page', () => {
-        const { getByText } = render(<Header siteTitle="Starter" />);
-
-        expect(getByText('Starter')).toHaveAttribute('href', '/');
     });
 });
