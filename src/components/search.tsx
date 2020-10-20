@@ -4,6 +4,7 @@ import { graphql, useStaticQuery, navigate, Link } from 'gatsby';
 import CharacterList from './character';
 import Autosuggest from 'react-autosuggest';
 import slugify from '../utils/slugify';
+import fuzzysort from 'fuzzysort';
 
 // https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#Using_Special_Characters
 const escapeRegexCharacters = (str) => {
@@ -33,17 +34,14 @@ const Search: FunctionComponent = (): ReactElement => {
         if (escapedValue === '') {
             return [];
         }
-
-        const regex = new RegExp('^' + escapedValue, 'i');
-
-        return results.filter((suggestion) => regex.test(suggestion.name));
+        return fuzzysort.go(value, results, { key: 'name' });
     };
 
     // When suggestion is clicked, Autosuggest needs to populate the input
     // based on the clicked suggestion. Teach Autosuggest how to calculate the
     // input value for every given suggestion.
     const getSuggestionValue = (suggestions) => {
-        return suggestions.name;
+        return suggestions.target;
     };
 
     const handleSubmit = (e) => {
@@ -56,7 +54,7 @@ const Search: FunctionComponent = (): ReactElement => {
 
         // If there is only one results lets just go to that page
         if (selected.length <= 1) {
-            const slug = slugify(value);
+            const slug = slugify(suggestions[0].target);
             navigate(`/${slug}`);
         } else {
             setShowResults(true);
@@ -66,7 +64,7 @@ const Search: FunctionComponent = (): ReactElement => {
     // Use your imagination to render suggestions.
     const renderSuggestion = (suggestions) => (
         <div className="bg-black text-white border border-t-0 px-4 py-2 focus:bg-starwarsYellow hover:bg-starwarsYellow hover:text-black hover:font-bold">
-            {suggestions.name}
+            {suggestions.target}
         </div>
     );
 
@@ -88,9 +86,16 @@ const Search: FunctionComponent = (): ReactElement => {
 
     if (status === 'error')
         return (
-            <p className="text-red">
-                Error, the force is not strong with this one..... :(
-            </p>
+            <div className="text-black border border-white bg-starwarsYellow p-4">
+                <p>Error, the force is not strong with this one..... :(</p>
+                <p>Please enter something into the input.</p>
+                <button
+                    className="bg-black text-white px-4 py-2"
+                    onClick={() => setStatus('idle')}
+                >
+                    Try again
+                </button>
+            </div>
         );
 
     if (showResults)
@@ -106,7 +111,9 @@ const Search: FunctionComponent = (): ReactElement => {
                     >
                         <path d="M15.705 7.41L14.295 6L8.29504 12L14.295 18L15.705 16.59L11.125 12L15.705 7.41Z" />
                     </svg>
-                    <button onClick={() => clearResults()}>Back to search</button>
+                    <button onClick={() => clearResults()}>
+                        Back to search
+                    </button>
                 </div>
                 <CharacterList characterNames={getSuggestions(value)} />
             </>

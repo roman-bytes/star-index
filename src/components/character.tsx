@@ -3,8 +3,12 @@ import { FunctionComponent, ReactElement } from 'react';
 import { Link } from 'gatsby';
 import slugify from '../utils/slugify';
 
+type Character = {
+    target: string;
+};
+
 type CharacterProps = {
-    characterNames: array;
+    characterNames: Character[];
 };
 
 const CharacterList: FunctionComponent<CharacterProps> = ({
@@ -13,10 +17,10 @@ const CharacterList: FunctionComponent<CharacterProps> = ({
     const character = characterNames.map((charc, ix) => (
         <Link
             key={ix}
-            to={slugify(charc.name)}
+            to={slugify(charc.target)}
             className="text-white border border-white p-4 hover:border-starwarsYellow flex items-center justify-between"
         >
-            {charc.name}
+            {charc.target}
             <svg
                 width={24}
                 height={24}
